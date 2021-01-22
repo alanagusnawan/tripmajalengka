@@ -13,38 +13,41 @@ wa.create().then(client => start(client));
 
 function start(client) {
   con.connect(function(err) {
-    if (err) throw err;
+    console.log("KOneksi Berhasil")
   client.onMessage(async message => {
+    if (err) throw err;
     if (message.body === 'Hi') {
     } else if (message.body.startsWith('!cariwisata ') && message.isGroupMsg === false) {
       let wisata = message.body.split(' ')[1];
 
       client
-      .startTyping(message.from);
+      .simulateTyping(message.from,true);
           con.query("SELECT * FROM OW WHERE OW_NAMA LIKE '%" + wisata + "%' ORDER BY OW_NAMA", function (err, result) {
             if (err) throw err;
             console.log(result),
             result.forEach(wisata => {
-              client.sendText(message.from,`${wisata.OW_NAMA}`);
-              client.sendText(message.from,`${wisata.OW_LL}`);
-              client.sendText(message.from,`${wisata.DESKRIPSI}`);
-          con.query("SELECT OW.KEC_KODE,KEC.KEC_KODE,KEC_NAMA FROM OW INNER JOIN KEC ON OW.KEC_KODE = KEC.KEC_KODE", function (err, result) {
-            if (err) throw err;
-              client.sendText(message.from,`${wisata.KEC_NAMA}`);
-            });
-          con.query("SELECT OW.DES_KODE,KEC_KODE,DES.DES_KODE,DES_NAMA FROM OW INNER JOIN DES ON OW.DES_KODE = DES.DES_KODE", function (err, result) {
+              client.sendText(message.from,`${wisata.OW_NAMA} atau ${wisata.OW_LL}
+              
+            bertempat di `
+              + con.query("SELECT KEC_NAMA FROM KEC WHERE KEC_KODE = ${wisata.KEC_KODE}", function (err, result) {
+                if (err) throw err;
+                result.forEach(kec => { + 
+              `${kec.KEC_NAMA},`
+            });}),
+            + con.query("SELECT DES.DES_NAMA FROM OW INNER JOIN DES ON OW.DES_KODE = DES.DES_KODE", function (err, result) {
               if (err) throw err;
-              client.sendText(message.from,`${wisata.DES_NAMA}`);
-            });
+              result.forEach(des => { + 
+                `${des.DES_NAMA}.`
+              });}),
+            );
+              client.sendText(message.from,`${wisata.DESKRIPSI}`);
               client.sendText(message.from,`${wisata.CARA_MENCAPAI}`);
               client.sendText(message.from,`${wisata.FASILITAS}`);
               client.sendText(message.from,`${wisata.HAL_PERHATIAN}`);
           });
         });
       client
-      .sendText(message.from, '*Waktu tempuh dapat berubah sewaktu waktu'),
-        client
-        .stopTyping(message.from);
+      .simulateTyping(message.from,false);
     }
   });
   client.onIncomingCall(async (call) => {
