@@ -22,29 +22,31 @@ function start(client) {
 
       client
       .simulateTyping(message.from,true);
-          con.query("SELECT * FROM OW WHERE OW_NAMA LIKE '%" + wisata + "%' ORDER BY OW_NAMA", function (err, result) {
+          con.query("SELECT * FROM OW WHERE OW_NAMA || OW_LL LIKE '%" + wisata + "%' ORDER BY OW_NAMA || OW_LL", function (err, result) {
             if (err) throw err;
             console.log(result),
             result.forEach(wisata => {
-              client.sendText(message.from,`${wisata.OW_NAMA} atau ${wisata.OW_LL}
-              
-            bertempat di `
-              + con.query("SELECT KEC_NAMA FROM KEC WHERE KEC_KODE = ${wisata.KEC_KODE}", function (err, result) {
-                if (err) throw err;
-                result.forEach(kec => { + 
-              `${kec.KEC_NAMA},`
-            });}),
-            + con.query("SELECT DES.DES_NAMA FROM OW INNER JOIN DES ON OW.DES_KODE = DES.DES_KODE", function (err, result) {
+              var kecamatan = `${wisata.KEC_KODE}`;
+              var desa = `${wisata.DES_KODE}`;
+              client.sendText(message.from,`${wisata.OW_NAMA} atau ${wisata.OW_LL}`),
+              con.query("SELECT * FROM KEC WHERE KEC_KODE = '" + kecamatan + "'", function (err, result) {
               if (err) throw err;
-              result.forEach(des => { + 
-                `${des.DES_NAMA}.`
-              });}),
-            );
+              console.log(result);
+              result.forEach(kec => { 
+                var nama_kecamatan = `${kec.KEC_NAMA},`;
+              con.query("SELECT * FROM DES WHERE DES_KODE = '" + desa + "'", function (err, result) {
+                if (err) throw err;
+                console.log(result);
+                result.forEach(des => { 
+                var nama_desa = `${des.DES_NAMA}.`;
+              client.sendText(message.from,`Berada di Kecamatan ` + nama_kecamatan + `Desa `+ nama_desa);
               client.sendText(message.from,`${wisata.DESKRIPSI}`);
               client.sendText(message.from,`${wisata.CARA_MENCAPAI}`);
               client.sendText(message.from,`${wisata.FASILITAS}`);
               client.sendText(message.from,`${wisata.HAL_PERHATIAN}`);
-          });
+          });});});
+        });
+      });
         });
       client
       .simulateTyping(message.from,false);
