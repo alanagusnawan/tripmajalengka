@@ -41,11 +41,53 @@ function start(client) {
                 var nama_desa = `${des.DES_NAMA}.`;
               client.sendText(message.from,`Berada di Kecamatan ` + nama_kecamatan + `Desa `+ nama_desa);
               client.sendText(message.from,`${wisata.DESKRIPSI}`);
-              client.sendText(message.from,`${wisata.CARA_MENCAPAI}`);
-              client.sendText(message.from,`${wisata.FASILITAS}`);
-              client.sendText(message.from,`${wisata.HAL_PERHATIAN}`);
+              client.sendText(message.from,`Rute untuk menuju lokasi ${wisata.CARA_MENCAPAI}`);
+              client.sendText(message.from,`Fasilitas yang tersedia ${wisata.FASILITAS}`);
+              client.sendText(message.from,`Hal yang harus diperhatikan ${wisata.HAL_PERHATIAN}`);
           });});});
         });
+      });
+        });
+      client
+      .simulateTyping(message.from,false);
+    } else if (message.body.startsWith('!wisatadaerahkecamatan ') && message.isGroupMsg === false) {
+      let wisata = message.body.split(' ')[1];
+
+      client
+      .simulateTyping(message.from,true);
+          con.query("SELECT OW_NAMA FROM OW INNER JOIN KEC ON KEC.KEC_NAMA = '" + wisata +"' AND OW.KEC_KODE = KEC.KEC_KODE ORDER BY OW.OW_NAMA", function (err, result) {
+            if (err) throw err;
+            console.log(result),
+            result.forEach(wisata => {
+              client.sendText(message.from,`${wisata.OW_NAMA}`);
+      });
+        });
+      client
+      .simulateTyping(message.from,false);
+    } else if (message.body.startsWith('!wisatadaerahdesa ') && message.isGroupMsg === false) {
+      let wisata = message.body.split(' ')[1];
+
+      client
+      .simulateTyping(message.from,true);
+          con.query("SELECT OW_NAMA FROM OW INNER JOIN DES ON DES.DES_NAMA = '" + wisata +"' AND OW.DES_KODE = DES.DES_KODE ORDER BY OW.OW_NAMA", function (err, result) {
+            if (err) throw err;
+            console.log(result),
+            result.forEach(wisata => {
+              client.sendText(message.from,`${wisata.OW_NAMA}`);
+      });
+        });
+      client
+      .simulateTyping(message.from,false);
+    } else if (message.body.startsWith('!wisata ') && message.isGroupMsg === false) {
+      let wisata = message.body.split(' ')[1];
+
+      client
+      .simulateTyping(message.from,true);
+          con.query("SELECT OW_NAMA FROM OW INNER JOIN KATEGORI ON KATEGORI.KATEGORI_NAMA = '" + wisata +"' AND OW_KATEGORI.OW_KODE = KATEGORI.KATEGORI_KODE AND OW.OW_KODE = OW_KATEGORI.OW_KODE ORDER BY OW.OW_NAMA", function (err, result) {
+            if (err) throw err;
+            console.log(result),
+            result.forEach(wisata => {
+              client.sendText(message.from,`${wisata.OW_NAMA}`);
       });
         });
       client
