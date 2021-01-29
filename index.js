@@ -1,14 +1,6 @@
 const wa = require('@open-wa/wa-automate');
 const mysql = require('mysql');
 
-var con = mysql.createConnection({
-  host: "db4free.net",
-  user: "tripmajalengka",
-  password: "tripmajalengka",
-  database: "tripmajalengka",
-  multipleStatements: true
-});
-
 wa.create().then(client => start(client));
 
 function start(client) {
