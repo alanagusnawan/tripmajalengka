@@ -92,6 +92,11 @@ function start(client) {
         });
       client
       .simulateTyping(message.from,false);
+    } else {
+      client.sendText(message.from,`Mohon maaf kata yang anda masukan salah berikut adalah kata yang benar :
+      1.!cariwisata 'nama wisata'
+      2.!wisatadaerahkecamatan 'nama kecamatan'
+      3.!wisatadaerahdesa 'nama desa'`)
     }
   });
   client.onIncomingCall(async (call) => {
