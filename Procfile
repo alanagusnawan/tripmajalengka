@@ -1,5 +1,1 @@
-web: node index.jsgit add .
-
-git commit -m "Procfile"
-
-git push heroku master
+web: node index.js
