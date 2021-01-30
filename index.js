@@ -16,7 +16,40 @@ function start(client) {
     console.log("KOneksi Berhasil")
     client.onMessage(async message => {
       if (err) throw err;
-      if (message.body === 'Hi') {
+      if (message.body === '!daftarwisata' && message.isGroupMsg === false) {
+      client
+      .simulateTyping(message.from,true);
+          con.query("SELECT OW_NAMA FROM OW ORDER BY OW_NAMA", function (err, result) {
+            if (err) throw err;
+            console.log(result),
+            result.forEach(wisata => {
+              client.sendText(message.from,`${wisata.OW_NAMA}`);
+          });
+        });
+      client
+      .simulateTyping(message.from,false);
+      } else if (message.body === '!kategoriwisata' || message.body.startsWith('!kategoriwisata ') && message.isGroupMsg === false) {
+      let wisata = message.body.split(' ')[1];
+
+      client
+        .simulateTyping(message.from,true);
+            con.query("SELECT KATEGORI_NAMA FROM KATEGORI ORDER BY KATEGORI_NAMA", function (err, result) {
+              if (err) throw err;
+              console.log(result),
+              result.forEach(wisata => {
+                client.sendText(message.from,`${wisata.KATEGORI_NAMA}`);
+            });
+          });
+            con.query("SELECT OW_NAMA FROM OW INNER JOIN KATEGORI ON KATEGORI.KATEGORI_NAMA = '" + wisata +"' AND OW_KATEGORI.OW_KODE = KATEGORI.KATEGORI_KODE AND OW.OW_KODE = OW_KATEGORI.OW_KODE ORDER BY OW.OW_NAMA", function (err, result) {
+              if (err) throw err;
+              console.log(result),
+              result.forEach(wisata => {
+                var kategori = `${wisata.OW_NAMA}`;
+                client.sendText(message.from, kategori);
+            });
+          });
+        client
+        .simulateTyping(message.from,false);
       } else if (message.body.startsWith('!cariwisata ') && message.isGroupMsg === false) {
       let wisata = message.body.split(' ')[1];
 
@@ -86,9 +119,10 @@ function start(client) {
       .simulateTyping(message.from,false);
     } else {
       client.sendText(message.from,`Mohon maaf kata yang anda masukan salah berikut adalah kata yang benar :
-      1. !cariwisata 'nama wisata'
-      2. !wisatadaerah 'nama daerah'
-      3. !wisata
+      1. !daftarwisata
+      2. !kategoriwisata atau !kategoriwisata 'jenis wisata'
+      3. !cariwisata 'nama wisata'
+      4. !wisatadaerah 'nama daerah'
       *Tanpa tanda petik*`)
     }
   });
